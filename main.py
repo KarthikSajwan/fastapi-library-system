@@ -115,4 +115,4 @@ async def delete_member(db: db_dependency, member_id: int = Path(gt=0)):
     
     db.query(Members).filter(Members.id == member_id).delete()
     db.commit()
-    
+
