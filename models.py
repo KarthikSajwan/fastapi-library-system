@@ -1,5 +1,6 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 
 class Books(Base):
@@ -22,3 +23,18 @@ class Members(Base):
     email = Column(String, unique=True, nullable=False, index=True)
     joined_date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+
+class BorrowRecords(Base):
+    __tablename__ = "borrow_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    member_id = Column(Integer, ForeignKey("members.id"), nullable=False)
+    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+
+    borrow_date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    return_date = Column(DateTime, nullable=True)  # when returned
+    is_returned = Column(Boolean, default=False)   # quick flag
+
+    # relationships
+    member = relationship("Members", backref="borrow_records")
+    book = relationship("Books", backref="borrow_records")
