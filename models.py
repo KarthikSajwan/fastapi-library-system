@@ -21,7 +21,9 @@ class Members(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, index=True)
     email = Column(String, unique=True, nullable=False, index=True)
+    hashed_password = Column(String)
     joined_date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    role = Column(String)
 
 
 class BorrowRecords(Base):
