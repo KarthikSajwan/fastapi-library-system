@@ -1,5 +1,6 @@
 annotated-types==0.7.0
 anyio==4.10.0
+bcrypt==4.0.1
 click==8.2.1
 colorama==0.4.6
 dnspython==2.8.0
@@ -10,6 +11,7 @@ h11==0.16.0
 idna==3.10
 mypy==1.18.1
 mypy_extensions==1.1.0
+passlib==1.7.4
 pathspec==0.12.1
 pydantic==2.11.9
 pydantic_core==2.33.2
