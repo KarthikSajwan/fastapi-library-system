@@ -40,3 +40,5 @@ class BorrowRecords(Base):
     # relationships
     member = relationship("Members", backref="borrow_records")
     book = relationship("Books", backref="borrow_records")
+
+    
