@@ -9,8 +9,12 @@ from database import SessionLocal
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 from datetime import datetime
+from .auth import get_current_user
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/books",
+    tags=["books"]
+)
 
 # DB Dependency
 def get_db():
@@ -21,7 +25,7 @@ def get_db():
         db.close()
 
 db_dependency = Annotated[Session, Depends(get_db)]
-
+user_dependency = Annotated[dict, Depends(get_current_user)]
 
 class BookRequest(BaseModel):
     title: str = Field(..., description="Title of the book")
@@ -35,7 +39,7 @@ async def read_all(db: db_dependency):
     return db.query(Books).all()
 
 
-@router.get("/books/{book_id}", status_code=status.HTTP_200_OK)
+@router.get("/{book_id}", status_code=status.HTTP_200_OK)
 async def read_book(db: db_dependency, book_id: int = Path(gt=0)):
     book_model = db.query(Books).filter(Books.id == book_id).first()
     if book_model is not None:
@@ -44,14 +48,14 @@ async def read_book(db: db_dependency, book_id: int = Path(gt=0)):
 
 
 
-@router.post("/books", status_code=status.HTTP_201_CREATED)
+@router.post("/books_add", status_code=status.HTTP_201_CREATED)
 async def add_book(db: db_dependency, book_request: BookRequest):
     book_model = Books(**book_request.dict())
     db.add(book_model)
     db.commit()    
 
 
-@router.put("/book/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_book(db: db_dependency, book_id: int, book_request: BookRequest):
     book_model = db.query(Books).filter(Books.id == book_id).first()
     if book_model is None:
@@ -66,7 +70,7 @@ async def update_book(db: db_dependency, book_id: int, book_request: BookRequest
 
 
 
-@router.delete("/book/{book_id}")
+@router.delete("/{book_id}")
 async def delete_book(db: db_dependency, book_id: int = Path(gt=0)):
     book_model = db.query(Books).filter(Books.id == book_id).first()
     if book_model is None:
