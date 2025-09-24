@@ -49,7 +49,9 @@ async def read_book(db: db_dependency, book_id: int = Path(gt=0)):
 
 
 @router.post("/books_add", status_code=status.HTTP_201_CREATED)
-async def add_book(db: db_dependency, book_request: BookRequest):
+async def add_book(user: user_dependency, db: db_dependency, book_request: BookRequest):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Fail")
     book_model = Books(**book_request.dict())
     db.add(book_model)
     db.commit()    
